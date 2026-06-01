@@ -1,0 +1,7 @@
+<RuleGroup name="PowerShell Monitoring">
+
+  <ProcessCreate onmatch="include">
+    <Image condition="end with">powershell.exe</Image>
+  </ProcessCreate>
+
+</RuleGroup>
