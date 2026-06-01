@@ -1,0 +1,7 @@
+<RuleGroup name="RunDLL32 Monitoring">
+
+  <ProcessCreate onmatch="include">
+    <Image condition="end with">rundll32.exe</Image>
+  </ProcessCreate>
+
+</RuleGroup>
