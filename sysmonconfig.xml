@@ -1,0 +1,11 @@
+<Sysmon schemaversion="4.90">
+  <EventFiltering>
+
+    <ProcessCreate onmatch="include">
+      <Image condition="end with">powershell.exe</Image>
+      <Image condition="end with">cmd.exe</Image>
+      <Image condition="end with">rundll32.exe</Image>
+    </ProcessCreate>
+
+  </EventFiltering>
+</Sysmon>
