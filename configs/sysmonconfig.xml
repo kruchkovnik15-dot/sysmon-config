@@ -1,0 +1,111 @@
+<Sysmon schemaversion="4.90">
+  <EventFiltering>
+
+    <RuleGroup name="PowerShell Abuse" groupRelation="and">
+      <ProcessCreate onmatch="include">
+        <Image condition="end with">powershell.exe</Image>
+        <Image condition="end with">pwsh.exe</Image>
+        <CommandLine condition="contains">-enc</CommandLine>
+        <CommandLine condition="contains">-encodedcommand</CommandLine>
+        <CommandLine condition="contains">-nop</CommandLine>
+        <CommandLine condition="contains">-w hidden</CommandLine>
+        <CommandLine condition="contains">executionpolicy bypass</CommandLine>
+        <CommandLine condition="contains">downloadstring</CommandLine>
+        <CommandLine condition="contains">invoke-webrequest</CommandLine>
+        <CommandLine condition="contains">iex</CommandLine>
+      </ProcessCreate>
+    </RuleGroup>
+
+    <RuleGroup name="Office Child Process Execution" groupRelation="and">
+      <ProcessCreate onmatch="include">
+        <ParentImage condition="end with">winword.exe</ParentImage>
+        <ParentImage condition="end with">excel.exe</ParentImage>
+        <ParentImage condition="end with">powerpnt.exe</ParentImage>
+        <ParentImage condition="end with">outlook.exe</ParentImage>
+        <Image condition="end with">powershell.exe</Image>
+        <Image condition="end with">pwsh.exe</Image>
+        <Image condition="end with">cmd.exe</Image>
+        <Image condition="end with">wscript.exe</Image>
+        <Image condition="end with">cscript.exe</Image>
+        <Image condition="end with">mshta.exe</Image>
+        <Image condition="end with">rundll32.exe</Image>
+        <Image condition="end with">regsvr32.exe</Image>
+      </ProcessCreate>
+    </RuleGroup>
+
+    <RuleGroup name="LOLBins Payload Retrieval And Script Execution" groupRelation="and">
+      <ProcessCreate onmatch="include">
+        <Image condition="end with">certutil.exe</Image>
+        <Image condition="end with">regsvr32.exe</Image>
+        <Image condition="end with">rundll32.exe</Image>
+        <Image condition="end with">mshta.exe</Image>
+        <Image condition="end with">bitsadmin.exe</Image>
+        <CommandLine condition="contains">http://</CommandLine>
+        <CommandLine condition="contains">https://</CommandLine>
+        <CommandLine condition="contains">scrobj.dll</CommandLine>
+        <CommandLine condition="contains">urlcache</CommandLine>
+        <CommandLine condition="contains">download</CommandLine>
+        <CommandLine condition="contains">vbscript:</CommandLine>
+        <CommandLine condition="contains">javascript:</CommandLine>
+      </ProcessCreate>
+    </RuleGroup>
+
+    <RuleGroup name="Credential Access LSASS Process Access" groupRelation="and">
+      <ProcessAccess onmatch="include">
+        <TargetImage condition="end with">lsass.exe</TargetImage>
+        <GrantedAccess condition="contains">0x1010</GrantedAccess>
+        <GrantedAccess condition="contains">0x1410</GrantedAccess>
+        <GrantedAccess condition="contains">0x143a</GrantedAccess>
+        <GrantedAccess condition="contains">0x1fffff</GrantedAccess>
+        <GrantedAccess condition="contains">0x1f0fff</GrantedAccess>
+      </ProcessAccess>
+    </RuleGroup>
+
+    <RuleGroup name="Defender Tampering And Registry Persistence" groupRelation="or">
+      <RegistryEvent onmatch="include">
+        <TargetObject condition="contains">Windows Defender</TargetObject>
+        <TargetObject condition="contains">DisableRealtimeMonitoring</TargetObject>
+        <TargetObject condition="contains">DisableBehaviorMonitoring</TargetObject>
+        <TargetObject condition="contains">Exclusions</TargetObject>
+        <TargetObject condition="contains">CurrentVersion\Run</TargetObject>
+        <TargetObject condition="contains">CurrentVersion\RunOnce</TargetObject>
+      </RegistryEvent>
+    </RuleGroup>
+
+    <RuleGroup name="Ransomware Recovery Inhibition" groupRelation="and">
+      <ProcessCreate onmatch="include">
+        <Image condition="end with">vssadmin.exe</Image>
+        <Image condition="end with">wmic.exe</Image>
+        <Image condition="end with">wbadmin.exe</Image>
+        <Image condition="end with">bcdedit.exe</Image>
+        <Image condition="end with">diskshadow.exe</Image>
+        <CommandLine condition="contains">delete shadows</CommandLine>
+        <CommandLine condition="contains">shadowcopy delete</CommandLine>
+        <CommandLine condition="contains">delete catalog</CommandLine>
+        <CommandLine condition="contains">recoveryenabled no</CommandLine>
+        <CommandLine condition="contains">bootstatuspolicy ignoreallfailures</CommandLine>
+      </ProcessCreate>
+    </RuleGroup>
+
+    <RuleGroup name="Suspicious Image Loads" groupRelation="or">
+      <ImageLoad onmatch="include">
+        <ImageLoaded condition="end with">scrobj.dll</ImageLoaded>
+        <ImageLoaded condition="end with">comsvcs.dll</ImageLoaded>
+      </ImageLoad>
+    </RuleGroup>
+
+    <RuleGroup name="Suspicious Dump Or Archive Creation" groupRelation="or">
+      <FileCreate onmatch="include">
+        <TargetFilename condition="contains">lsass</TargetFilename>
+        <TargetFilename condition="contains">credential</TargetFilename>
+        <TargetFilename condition="contains">password</TargetFilename>
+        <TargetFilename condition="contains">dump</TargetFilename>
+        <TargetFilename condition="end with">.dmp</TargetFilename>
+        <TargetFilename condition="end with">.zip</TargetFilename>
+        <TargetFilename condition="end with">.7z</TargetFilename>
+        <TargetFilename condition="end with">.rar</TargetFilename>
+      </FileCreate>
+    </RuleGroup>
+
+  </EventFiltering>
+</Sysmon>
