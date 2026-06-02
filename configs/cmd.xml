@@ -1,7 +1,0 @@
-<RuleGroup name="CMD Monitoring">
-
-  <ProcessCreate onmatch="include">
-    <Image condition="end with">cmd.exe</Image>
-  </ProcessCreate>
-
-</RuleGroup>
